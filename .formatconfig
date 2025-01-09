@@ -1,0 +1,8 @@
+root = true
+
+[*.*]
+enable = true
+enable_in_debug = true
+command = Edit.FormatDocument Edit.RemoveAndSort
+allowed_extensions = .*
+denied_extensions =

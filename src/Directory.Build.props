@@ -1,0 +1,16 @@
+<Project>
+
+  <PropertyGroup>
+    <Company>PagoPA Spa</Company>
+    <Authors>Team DevEx</Authors>
+    <Copyright>Copyright ©PagoPA $([System.DateTime]::Now.ToString('yyyy'))</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <EnableNETAnalyzer>True</EnableNETAnalyzer>
+    <AnalysisLevel>latest</AnalysisLevel> 
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <AllEnabledByDefault>True</AllEnabledByDefault>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+</Project>
