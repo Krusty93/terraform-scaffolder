@@ -1,0 +1,21 @@
+[+] Processing Terraform class: AppService
+[+] attribute: TerraformModule(
+    "github.com/pagopa/dx/tree/main/infra/modules/app_service",
+    "Azure App Service - Web application hosting")
+[+] attribute path: "github.com/pagopa/dx/tree/main/infra/modules/app_service"
+[+] attribute description: "Azure App Service - Web application hosting"
+[+] usings: 
+[Error start]
+[-] Exception occurred in generator: System.NullReferenceException: Object reference not set to an instance of an object.
+   at TerraformScaffolder.SourceGenerator.TerraformGenerator.Execute(ClassDeclarationSyntax terraformClass, SourceProductionContext context)
+   at TerraformScaffolder.SourceGenerator.TerraformGenerator.<>c.<Initialize>b__0_2(SourceProductionContext sourceProductionContext, ClassDeclarationSyntax terraformClass)
+[Error end]
+
+[+] Logging ended at 2025-01-10 22:06:55.273
+[+] Processing Terraform class: FunctionApp
+[+] attribute: TerraformModule(
+    "github.com/pagopa/dx/tree/main/infra/modules/azure_function_app",
+    "Azure Function App - Serverless compute services")
+[+] attribute path: "github.com/pagopa/dx/tree/main/infra/modules/azure_function_app"
+[+] attribute description: "Azure Function App - Serverless compute services"
+[+] Logging ended at 2025-01-10 22:06:55.274

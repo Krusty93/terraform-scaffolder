@@ -1,27 +1,22 @@
-namespace TerraformScaffolder.Models;
+﻿namespace TerraformScaffolder.Models;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class TerraformModuleAttribute : Attribute
+public class TerraformModuleAttribute(string modulePath, string description, string shortName) : Attribute
 {
-    public string ModulePath { get; }
-    public string Description { get; }
+    public string ModulePath { get; } = modulePath;
 
-    public TerraformModuleAttribute(string modulePath, string description)
-    {
-        ModulePath = modulePath;
-        Description = description;
-    }
+    public string Description { get; } = description;
+
+    public string ShortName { get; } = shortName;
+
 }
 
 [AttributeUsage(AttributeTargets.Property)]
-public class TerraformPropertyAttribute : Attribute
+public class TerraformPropertyAttribute(string? name = null) : Attribute
 {
-    public string? Name { get; }
-    public bool Required { get; set; }
-    public string? DefaultValue { get; set; }
+    public string? Name { get; } = name;
 
-    public TerraformPropertyAttribute(string? name = null)
-    {
-        Name = name;
-    }
+    public bool Required { get; set; }
+
+    public string? DefaultValue { get; set; }
 }

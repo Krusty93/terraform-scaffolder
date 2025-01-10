@@ -1,0 +1,33 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformScaffolder.SourceGenerator", "..\TerraformScaffolder.SourceGenerator\TerraformScaffolder.SourceGenerator.csproj", "{999ADD1A-8FEF-4F91-9A15-5C1CAC3FA89D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformScaffolder.Models", "..\TerraformScaffolder.Models\TerraformScaffolder.Models.csproj", "{ABB1659C-F121-44FC-BE6D-83E24AA53091}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerraformScaffolder.Cli", "..\TerraformScaffolder.Cli\TerraformScaffolder.Cli.csproj", "{78451BD0-8743-4BB4-B643-CDE4275B4B36}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{999ADD1A-8FEF-4F91-9A15-5C1CAC3FA89D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{999ADD1A-8FEF-4F91-9A15-5C1CAC3FA89D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{999ADD1A-8FEF-4F91-9A15-5C1CAC3FA89D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{999ADD1A-8FEF-4F91-9A15-5C1CAC3FA89D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABB1659C-F121-44FC-BE6D-83E24AA53091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABB1659C-F121-44FC-BE6D-83E24AA53091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABB1659C-F121-44FC-BE6D-83E24AA53091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABB1659C-F121-44FC-BE6D-83E24AA53091}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78451BD0-8743-4BB4-B643-CDE4275B4B36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78451BD0-8743-4BB4-B643-CDE4275B4B36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78451BD0-8743-4BB4-B643-CDE4275B4B36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78451BD0-8743-4BB4-B643-CDE4275B4B36}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

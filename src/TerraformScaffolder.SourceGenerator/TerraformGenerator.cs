@@ -1,43 +1,182 @@
+﻿using System.Text;
 using Microsoft.CodeAnalysis;
-using System.Text;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using TerraformScaffolder.Models;
 
 namespace TerraformScaffolder.SourceGenerator;
 
 [Generator]
-public class TerraformGenerator : ISourceGenerator
+public class TerraformGenerator : IIncrementalGenerator
 {
-    public void Initialize(GeneratorInitializationContext context)
+    public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
-    }
+        GeneratorLogging.SetLogFilePath("F:\\terraform-scaffolder\\log.txt");
 
-    public void Execute(GeneratorExecutionContext context)
-    {
-        if (context.SyntaxReceiver is not SyntaxReceiver receiver)
-            return;
-
-        var terraformModuleAttribute = context.Compilation.GetTypeByMetadataName("TerraformScaffolder.Models.TerraformModuleAttribute");
-        var terraformPropertyAttribute = context.Compilation.GetTypeByMetadataName("TerraformScaffolder.Models.TerraformPropertyAttribute");
-
-        if (terraformModuleAttribute == null || terraformPropertyAttribute == null)
-            return;
-
-        var moduleClasses = new List<INamedTypeSymbol>();
-        foreach (var candidateClass in receiver.CandidateClasses)
-        {
-            var model = context.Compilation.GetSemanticModel(candidateClass.SyntaxTree);
-            if (model.GetDeclaredSymbol(candidateClass) is INamedTypeSymbol classSymbol)
+        IncrementalValuesProvider<ClassDeclarationSyntax> terraformClassesProvider = context.SyntaxProvider.CreateSyntaxProvider(
+            predicate: (SyntaxNode node, CancellationToken token) =>
             {
-                var moduleAttr = classSymbol.GetAttributes()
-                    .FirstOrDefault(ad => ad.AttributeClass?.Equals(terraformModuleAttribute, SymbolEqualityComparer.Default) ?? false);
+                return node is ClassDeclarationSyntax classDeclarationSyntax &&
+                       classDeclarationSyntax.AttributeLists.Any();
+            },
+            transform: (GeneratorSyntaxContext ctx, CancellationToken token) =>
+            {
+                return (ClassDeclarationSyntax)ctx.Node;
+            });
 
-                if (moduleAttr != null)
-                    moduleClasses.Add(classSymbol);
-            }
-        }
-
-        GenerateModuleFactory(context, moduleClasses);
+        context.RegisterSourceOutput(
+            terraformClassesProvider,
+            (sourceProductionContext, terraformClass) =>
+            {
+                try
+                {
+                    Execute(terraformClass, sourceProductionContext);
+                }
+                catch (Exception ex)
+                {
+                    GeneratorLogging.LogMessage($"[-] Exception occurred in generator: {ex}", LoggingLevel.Error);
+                }
+                finally
+                {
+                    GeneratorLogging.EndLogging();
+                }
+            });
     }
+
+    private static void Execute(ClassDeclarationSyntax terraformClass, SourceProductionContext context)
+    {
+        GeneratorLogging.LogMessage($"[+] Processing Terraform class: {terraformClass.Identifier}");
+
+        var source = new StringBuilder();
+
+        //var classMembers = terraformClass.Members;
+
+        //var getAvailableModulesMethod = classMembers.FirstOrDefault(x => x is MethodDeclarationSyntax mds /*&& mds.Identifier.Text == "GetAvailableModules"*/);
+
+        //GeneratorLogging.LogMessage($"[+] method found: {getAvailableModulesMethod}");
+
+        var attribute = terraformClass.AttributeLists
+            .SelectMany(al => al.Attributes)
+            .FirstOrDefault(attr => attr.Name.ToString() == "TerraformModule");
+
+        GeneratorLogging.LogMessage($"[+] attribute: {attribute}");
+
+        // TODO: improve
+        var modulePath = attribute?.ArgumentList?.Arguments.FirstOrDefault()?.ToString();
+        var moduleDescription = attribute?.ArgumentList?.Arguments.Skip(1).FirstOrDefault()?.ToString();
+        var moduleShortName = attribute?.ArgumentList?.Arguments.Skip(2).FirstOrDefault()?.ToString();
+
+        source.AppendLine($@"
+            module ""{moduleShortName}_{{instance_number}}"" {{
+                source = ""{modulePath}?ref={{version}}""
+
+                environment = {{
+                    prefix          = {{prefix}}
+                    env_short       = {{env_short}}
+                    location        = {{location}}
+                    domain          = {{domain}}
+                    app_name        = {{app_name}}
+                    instance_number = {{instance_number}}
+                }}
+            }}");
+
+        builder.AppendLine($@""module """"{{name}}-{moduleClass.Name.ToLowerInvariant()}"""""" {
+            {
+                ");
+        builder.AppendLine($@""  source = """"{modulePath}""""");
+
+                //GeneratorLogging.LogMessage($"[+] attribute path: {modulePath}");
+                //GeneratorLogging.LogMessage($"[+] attribute description: {moduleDescription}");
+
+                //var usings = terraformClass.SyntaxTree.GetCompilationUnitRoot().Usings;
+
+                //GeneratorLogging.LogMessage($"[+] usings: {usings}");
+
+                //foreach (var usingStatement in usings)
+                //{
+                //    source.AppendLine(usingStatement.ToString());
+                //}
+
+                //source.AppendLine();
+
+                //SyntaxNode classNamespace = terraformClass.Parent;
+
+                //while (classNamespace is not NamespaceDeclarationSyntax)
+                //{
+                //    classNamespace = classNamespace.Parent;
+                //}
+
+                //source.AppendLine($"namespace {((NamespaceDeclarationSyntax)classNamespace).Name};");
+
+                //source.AppendLine($"public {terraformClass.Modifiers} class {terraformClass.Identifier}");
+                //source.AppendLine("{");
+
+                //if (attributeValue != null)
+                //{
+                //    source.AppendLine($@"            [""{terraformClass.Identifier.Text.ToLowerInvariant()}""] = (""{attributeValue}"", ""Description""),");
+                //}
+
+                source.AppendLine(@"
+                };
+            }
+        }");
+
+                //        source.AppendLine(@"
+                //using System;
+                //using System.Text;
+
+                //namespace TerraformScaffolder.Generated;
+
+                ///// <summary>
+                ///// Produce Terraform code for the specified module type
+                ///// </summary>
+                //public static class TerraformModuleFactory
+                //{
+                //    /// <summary>
+                //    /// Get list of available Terraform modules
+                //    /// </summary>
+                //    public static Dictionary<string, (string ModulePath, string Description)> GetAvailableModules()
+                //    {
+                //        return new Dictionary<string, (string, string)>
+                //        {}
+                //    }");
+                //        source.AppendLine(@"
+                //}"
+                //        );
+
+                var output = source.ToString();
+
+                GeneratorLogging.LogMessage($"[+] generated code: {output}");
+
+                context.AddSource("TerraformModuleFactory.Generated.cs", output);
+            }
+
+    //public void Execute(GeneratorExecutionContext context)
+    //{
+    //    if (context.SyntaxReceiver is not SyntaxReceiver receiver)
+    //        return;
+
+            //    var terraformModuleAttribute = context.Compilation.GetTypeByMetadataName("TerraformScaffolder.Models.TerraformModuleAttribute");
+            //    var terraformPropertyAttribute = context.Compilation.GetTypeByMetadataName("TerraformScaffolder.Models.TerraformPropertyAttribute");
+
+            //    if (terraformModuleAttribute == null || terraformPropertyAttribute == null)
+            //        return;
+
+            //    var moduleClasses = new List<INamedTypeSymbol>();
+            //    foreach (var candidateClass in receiver.CandidateClasses)
+            //    {
+            //        var model = context.Compilation.GetSemanticModel(candidateClass.SyntaxTree);
+            //        if (model.GetDeclaredSymbol(candidateClass) is INamedTypeSymbol classSymbol)
+            //        {
+            //            var moduleAttr = classSymbol.GetAttributes()
+            //                .FirstOrDefault(ad => ad.AttributeClass?.Equals(terraformModuleAttribute, SymbolEqualityComparer.Default) ?? false);
+
+            //            if (moduleAttr != null)
+            //                moduleClasses.Add(classSymbol);
+            //        }
+            //    }
+
+            //    GenerateModuleFactory(context, moduleClasses);
+            //}
 
     private static void GenerateModuleFactory(GeneratorExecutionContext context, List<INamedTypeSymbol> moduleClasses)
     {
@@ -108,7 +247,7 @@ namespace TerraformScaffolder.Generated
         source.AppendLine(@"    }
 }");
 
-        context.AddSource("TerraformModuleFactory.g.cs", source.ToString());
+        //context.AddSource("TerraformModuleFactory.g.cs", source.ToString());
     }
 
     private static void GenerateModuleMethod(StringBuilder source, INamedTypeSymbol moduleClass)
